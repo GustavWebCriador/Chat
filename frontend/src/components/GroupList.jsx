@@ -10,38 +10,40 @@ export default function GroupList({
 
   return (
 
-    <div>
+    <div className="sidebar-list">
 
-      <h3>
-        Grupos
-      </h3>
+      {
+        grupos.map(
+          (grupo) => (
 
-      {grupos.map(
-        (grupo) => (
+            <div
 
-        <div
-          key={grupo.id}
+              key={grupo.id}
 
-          className={
-            grupoSelecionado?.id
-            === grupo.id
+              className={
 
-            ? 'online-user active'
+                grupoSelecionado
+                ?.id === grupo.id
 
-            : 'online-user'
-          }
+                ? 'sidebar-item active'
 
-          onClick={() =>
-            selecionarGrupo(
-              grupo
-            )
-          }
-        >
+                : 'sidebar-item'
+              }
 
-          # {grupo.nome}
+              onClick={() =>
+                selecionarGrupo(
+                  grupo
+                )
+              }
+            >
 
-        </div>
-      ))}
+              <span>
+                # {grupo.nome}
+              </span>
+
+            </div>
+          ))
+      }
 
     </div>
   )

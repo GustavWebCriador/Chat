@@ -81,38 +81,278 @@ body {
 
 /* SIDEBAR */
 
+
 .sidebar {
-  width: 260px;
-  min-width: 260px;
-  background: #111827;
+
+  width: 300px;
+
+  min-width: 300px;
+
+  background: linear-gradient(
+    180deg,
+    #111827 0%,
+    #0f172a 100%
+  );
+
   color: white;
-  padding: 20px;
-  overflow-y: auto;
+
+  display: flex;
+
+  flex-direction: column;
+
   border-right: 1px solid #1f2937;
+
+  overflow: hidden;
 }
 
-.sidebar h2 {
-  color: white;
-  margin-bottom: 20px;
-  font-size: 24px;
+/* TOPO */
+
+.sidebar-top {
+
+  padding: 20px;
+
+  border-bottom: 1px solid #1f2937;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
 }
 
-.user-item,
-.online-user,
-.group-item {
-  background: #1f2937;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  font-size: 15px;
+.sidebar-user {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.user-avatar {
+
+  width: 45px;
+
+  height: 45px;
+
+  border-radius: 50%;
+
+  background: #2563eb;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 18px;
+
+  font-weight: bold;
+}
+
+.user-info h2 {
+
+  font-size: 17px;
+
+  margin-bottom: 2px;
+}
+
+.user-status {
+
+  font-size: 12px;
+
+  color: #22c55e;
+}
+
+.logout-btn {
+
+  width: 38px;
+
+  height: 38px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #2b2d31;
+
+  color: #b5bac1;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
   cursor: pointer;
+
   transition: 0.2s;
 }
 
-.user-item:hover,
-.online-user:hover,
-.group-item:hover {
+.logout-btn:hover {
+
+  background: #da373c;
+
+  color: white;
+}
+
+/* CRIAR GRUPO */
+
+.group-create {
+
+  padding: 20px;
+
+  border-bottom: 1px solid #1f2937;
+
+  display: flex;
+
+  gap: 10px;
+}
+
+.group-create input {
+
+  flex: 1;
+
+  background: #1f2937;
+
+  border: none;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  color: white;
+
+  outline: none;
+}
+
+.group-create button {
+
+  background: #2563eb;
+
+  border: none;
+
+  color: white;
+
+  padding: 12px 14px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+  transition: 0.2s;
+}
+
+.group-create button:hover {
+
+  background: #3b82f6;
+}
+
+/* SEÇÕES */
+
+.sidebar-section {
+
+  padding: 15px 20px 10px;
+
+  font-size: 13px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+
+  color: #94a3b8;
+
+  font-weight: bold;
+}
+
+/* LISTAS */
+
+.sidebar-list {
+
+  padding: 0 15px;
+
+  overflow-y: auto;
+}
+
+/* ITEM */
+
+.sidebar-item {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 12px 14px;
+
+  border-radius: 12px;
+
+  margin-bottom: 8px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.sidebar-item:hover {
+
+  background: #1e293b;
+}
+
+.sidebar-item.active {
+
+  background: #2563eb;
+}
+
+/* STATUS ONLINE */
+
+.online-dot {
+
+  width: 10px;
+
+  height: 10px;
+
+  border-radius: 50%;
+
+  background: #22c55e;
+
+  flex-shrink: 0;
+}
+
+/* ÍCONE GRUPO */
+
+.group-icon {
+
+  width: 32px;
+
+  height: 32px;
+
+  border-radius: 10px;
+
   background: #374151;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 14px;
+
+  font-weight: bold;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 768px) {
+
+  .sidebar {
+
+    display: none;
+  }
 }
 
 /* CHAT CONTAINER */
@@ -206,10 +446,12 @@ body {
 .message-input-area {
   width: 100%;
   padding: 20px;
-  background: white;
+  background: rgba(17, 24, 39, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   gap: 10px;
-  border-top: 1px solid #e5e7eb;
+  border-top: none;
 }
 
 .message-input-area input {
@@ -271,4 +513,158 @@ body {
   .message-card {
     max-width: 85%;
   }
+}
+
+
+/* SECTION HEADER */
+
+.section-header {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 18px 16px 10px;
+
+  color: #949ba4;
+
+  font-size: 12px;
+
+  font-weight: bold;
+
+  letter-spacing: 1px;
+}
+
+/* BOTÃO + */
+
+.add-btn {
+
+  width: 28px;
+
+  height: 28px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #949ba4;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.add-btn:hover {
+
+  background: #2b2d31;
+
+  color: white;
+}
+
+/* INPUT CRIAR GRUPO */
+
+.group-create {
+
+  display: flex;
+
+  gap: 10px;
+
+  padding: 0 15px 15px;
+}
+
+.group-create input {
+
+  flex: 1;
+
+  background: #111214;
+
+  border: 1px solid #2b2d31;
+
+  color: white;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  outline: none;
+
+  font-size: 14px;
+}
+
+.group-create input:focus {
+
+  border-color: #5865f2;
+}
+
+.group-create button {
+
+  border: none;
+
+  background: #5865f2;
+
+  color: white;
+
+  padding: 0 16px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+
+  font-weight: bold;
+}
+
+.group-create button:hover {
+
+  opacity: 0.9;
+}
+
+.section-title {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.notification-badge {
+
+  margin-left: auto;
+
+  min-width: 22px;
+
+  height: 22px;
+
+  padding: 0 6px;
+
+  border-radius: 999px;
+
+  background: #ef4444;
+
+  color: white;
+
+  font-size: 12px;
+
+  font-weight: bold;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  box-shadow:
+    0 0 12px rgba(239, 68, 68, 0.5);
 }

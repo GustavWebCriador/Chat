@@ -6,52 +6,65 @@ export default function OnlineUsers({
 
   usuarioSelecionado,
 
-  usuarioAtual
+  usuarioAtual,
+
+  naoLidas
 
 }) {
 
   return (
 
-    <div className="online-users">
-
-      <h3>
-        Usuários Online
-      </h3>
+    <div className="sidebar-list">
 
       {usuariosOnline
 
         .filter(
           (user) =>
-            user.nome
-            !== usuarioAtual.nome
+            user.nome !==
+            usuarioAtual?.nome
         )
 
         .map((user) => (
 
           <div
+
             key={user.id}
 
-            className={
+            className={`sidebar-item ${
               usuarioSelecionado?.id
               === user.id
-
-              ? 'online-user active'
-
-              : 'online-user'
-            }
+                ? 'active'
+                : ''
+            }`}
 
             onClick={() =>
-              selecionarUsuario(
-                user
-              )
+              selecionarUsuario(user)
             }
           >
 
-            🟢 {user.nome}
+            <div className="online-dot" />
+
+            <span>
+              {user.nome}
+            </span>
+
+            {
+
+              naoLidas?.[user.id]
+              > 0 && (
+
+                <div className="notification-badge">
+
+                  {
+                    naoLidas[user.id]
+                  }
+
+                </div>
+              )
+            }
 
           </div>
-      ))}
-
+        ))}
     </div>
   )
 }

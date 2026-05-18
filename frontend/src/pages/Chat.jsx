@@ -1,5 +1,8 @@
-import { useEffect, useState }
-  from 'react'
+import {
+  useEffect,
+  useState,
+  useRef
+} from 'react'
 
 import socket from '../socket'
 
@@ -45,6 +48,17 @@ export default function Chat() {
   const [novoGrupo,
     setNovoGrupo] =
     useState('')
+
+  const [naoLidas, setNaoLidas] =
+    useState({})
+
+  const messagesEndRef =
+    useRef(null)
+
+  const usuarioSelecionadoRef =
+    useRef(null)
+
+  /* SOCKET */
 
   useEffect(() => {
 
@@ -99,6 +113,27 @@ export default function Chat() {
             tipo: 'privado'
           }
         ])
+
+        const conversaAberta =
+
+          usuarioSelecionadoRef.current
+          &&
+
+          usuarioSelecionadoRef.current.id
+          === dados.remetenteId
+
+        if (!conversaAberta) {
+
+          setNaoLidas((prev) => ({
+
+            ...prev,
+
+            [dados.remetenteId]:
+
+              (prev[dados.remetenteId] || 0)
+              + 1
+          }))
+        }
       }
     )
 
@@ -123,6 +158,17 @@ export default function Chat() {
 
   }, [])
 
+  /* ATUALIZA REF */
+
+  useEffect(() => {
+
+    usuarioSelecionadoRef.current =
+      usuarioSelecionado
+
+  }, [usuarioSelecionado])
+
+  /* GRUPO PADRÃO */
+
   useEffect(() => {
 
     if (
@@ -143,6 +189,30 @@ export default function Chat() {
 
   }, [grupos])
 
+  /* AUTO SCROLL */
+
+ useEffect(() => {
+
+  setTimeout(() => {
+
+    messagesEndRef.current
+      ?.scrollIntoView({
+        behavior: 'smooth'
+      })
+
+  }, 50)
+
+}, [
+
+  mensagens,
+
+  grupoSelecionado,
+
+  usuarioSelecionado
+
+])
+  /* CRIAR GRUPO */
+
   function criarGrupo() {
 
     if (!novoGrupo.trim())
@@ -155,6 +225,8 @@ export default function Chat() {
 
     setNovoGrupo('')
   }
+
+  /* SELECIONAR GRUPO */
 
   function selecionarGrupo(
     grupo
@@ -174,6 +246,8 @@ export default function Chat() {
     )
   }
 
+  /* SELECIONAR USUÁRIO */
+
   function selecionarUsuario(
     user
   ) {
@@ -185,7 +259,16 @@ export default function Chat() {
     setGrupoSelecionado(
       null
     )
+
+    setNaoLidas((prev) => ({
+
+      ...prev,
+
+      [user.id]: 0
+    }))
   }
+
+  /* ENVIAR */
 
   function enviarMensagem() {
 
@@ -227,6 +310,8 @@ export default function Chat() {
 
     setMensagem('')
   }
+
+  /* SAIR */
 
   function sair() {
 
@@ -274,6 +359,10 @@ export default function Chat() {
 
         criarGrupo={
           criarGrupo
+        }
+
+        naoLidas={
+          naoLidas
         }
 
         sair={sair}
@@ -328,6 +417,7 @@ export default function Chat() {
           }
 
           {
+
             usuarioSelecionado &&
 
             mensagens
@@ -377,6 +467,8 @@ export default function Chat() {
                 />
               ))
           }
+
+          <div ref={messagesEndRef} />
 
         </div>
 

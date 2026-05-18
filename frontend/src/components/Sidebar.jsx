@@ -1,6 +1,17 @@
-import OnlineUsers from './OnlineUsers'
+import { useState } from 'react'
 
-import GroupList from './GroupList'
+import {
+  LogOut,
+  Plus,
+  Users,
+  MessageCircle
+} from 'lucide-react'
+
+import OnlineUsers
+  from './OnlineUsers'
+
+import GroupList
+  from './GroupList'
 
 export default function Sidebar({
 
@@ -24,49 +35,136 @@ export default function Sidebar({
 
   criarGrupo,
 
+  naoLidas,
+
   sair
 
 }) {
+
+  const [
+    mostrarCriarGrupo,
+    setMostrarCriarGrupo
+  ] = useState(false)
+
+  function handleCriarGrupo() {
+
+    criarGrupo()
+
+    setMostrarCriarGrupo(false)
+  }
 
   return (
 
     <div className="sidebar">
 
+      {/* TOPO */}
+
       <div className="sidebar-top">
 
-        <h2>
-          {usuario?.nome}
-        </h2>
+        <div className="sidebar-user">
 
-        <button onClick={sair}>
-          Sair
-        </button>
+          <div className="user-avatar">
 
-      </div>
+            {
+              usuario?.nome
+                ?.charAt(0)
+                ?.toUpperCase()
+            }
 
-      <div className="group-create">
+          </div>
 
-        <input
-          type="text"
+          <div className="user-info">
 
-          placeholder="Novo grupo"
+            <h2>
+              {usuario?.nome}
+            </h2>
 
-          value={novoGrupo}
+            <div className="user-status">
 
-          onChange={(e) =>
-            setNovoGrupo(
-              e.target.value
-            )
-          }
-        />
+              <span className="status-dot" />
+
+              Online
+
+            </div>
+
+          </div>
+
+        </div>
 
         <button
-          onClick={criarGrupo}
+          className="logout-btn"
+          onClick={sair}
         >
-          Criar
+          <LogOut size={18} />
         </button>
 
       </div>
+
+      {/* GRUPOS */}
+
+      <div className="section-header">
+
+        <div className="section-title">
+
+          <Users size={15} />
+
+          <span>
+            Grupos
+          </span>
+
+        </div>
+
+        <button
+          className="add-btn"
+          onClick={() =>
+            setMostrarCriarGrupo(
+              !mostrarCriarGrupo
+            )
+          }
+        >
+          <Plus size={16} />
+        </button>
+
+      </div>
+
+      {
+        mostrarCriarGrupo && (
+
+          <div className="group-create">
+
+            <input
+              type="text"
+
+              placeholder="Nome do grupo"
+
+              value={novoGrupo}
+
+              onChange={(e) =>
+                setNovoGrupo(
+                  e.target.value
+                )
+              }
+
+              onKeyDown={(e) => {
+
+                if (e.key === 'Enter') {
+
+                  handleCriarGrupo()
+                }
+              }}
+            />
+
+            <button
+              onClick={
+                handleCriarGrupo
+              }
+            >
+              Criar
+            </button>
+
+          </div>
+        )
+      }
 
       <GroupList
 
@@ -81,6 +179,22 @@ export default function Sidebar({
         }
 
       />
+
+      {/* ONLINE */}
+
+      <div className="section-header">
+
+        <div className="section-title">
+
+          <MessageCircle size={15} />
+
+          <span>
+            Usuários Online
+          </span>
+
+        </div>
+
+      </div>
 
       <OnlineUsers
 
@@ -97,6 +211,8 @@ export default function Sidebar({
         }
 
         usuarioAtual={usuario}
+
+        naoLidas={naoLidas}
 
       />
 
