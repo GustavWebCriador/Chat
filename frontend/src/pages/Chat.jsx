@@ -1,3 +1,6 @@
+import React from 'react';
+import axios from 'axios';
+
 import {
   useEffect,
   useState,
@@ -136,6 +139,115 @@ export default function Chat() {
         }
       }
     )
+    socket.on(
+      'historico_grupo',
+      (historico) => {
+
+        const mensagensFormatadas =
+          historico.map((msg) => ({
+
+            _id:
+              msg._id,
+
+            tipo:
+              msg.tipo,
+
+            grupoId:
+              Number(msg.grupoId),
+
+            usuario:
+              msg.usuario,
+
+            mensagem:
+              msg.mensagem,
+
+            horario:
+              new Date(
+                msg.horario
+              ).toLocaleTimeString(
+                'pt-BR',
+                {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                }
+              )
+          }))
+
+        setMensagens((prev) => {
+
+          const mensagensPrivadas =
+            prev.filter(
+              (msg) =>
+                msg.tipo !== 'grupo'
+            )
+
+          return [
+
+            ...mensagensPrivadas,
+
+            ...mensagensFormatadas
+          ]
+        })
+      }
+    )
+    socket.on(
+      'historico_privado',
+      (historico) => {
+
+        const mensagensFormatadas =
+          historico.map((msg) => ({
+
+            _id:
+              msg._id,
+
+            tipo:
+              msg.tipo,
+
+            usuario:
+              msg.usuario,
+
+            mensagem:
+              msg.mensagem,
+
+            destinatarioId:
+              msg.destinatarioId,
+
+            remetenteId:
+              msg.remetenteId,
+
+            remetenteNome:
+              msg.remetenteNome,
+
+            horario:
+              new Date(
+                msg.horario
+              ).toLocaleTimeString(
+                'pt-BR',
+                {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                }
+              )
+          }))
+
+        setMensagens((prev) => {
+
+          const mensagensGrupo =
+            prev.filter(
+              (msg) =>
+                msg.tipo !== 'privado'
+            )
+
+          return [
+
+            ...mensagensGrupo,
+
+            ...mensagensFormatadas
+          ]
+        })
+      }
+    )
+
 
     return () => {
 
@@ -154,6 +266,14 @@ export default function Chat() {
       socket.off(
         'receber_mensagem_privada'
       )
+      socket.off(
+        'historico_grupo'
+      )
+
+      socket.off(
+        'historico_privado'
+      )
+
     }
 
   }, [])
@@ -192,25 +312,16 @@ export default function Chat() {
   /* AUTO SCROLL */
 
  useEffect(() => {
+  const timer = setTimeout(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: 'smooth'
+    });
+  }, 50);
 
-  setTimeout(() => {
+  // Limpa o timer se o componente for desmontado ou se novas mensagens chegarem muito rápido
+  return () => clearTimeout(timer);
+}, [mensagens]); // Garanta que o nome está idêntico ao do seu useState!
 
-    messagesEndRef.current
-      ?.scrollIntoView({
-        behavior: 'smooth'
-      })
-
-  }, 50)
-
-}, [
-
-  mensagens,
-
-  grupoSelecionado,
-
-  usuarioSelecionado
-
-])
   /* CRIAR GRUPO */
 
   function criarGrupo() {
@@ -267,6 +378,20 @@ export default function Chat() {
       [user.id]: 0
     }))
   }
+  socket.emit(
+  'historico_privado',
+  {
+
+    usuarioAtual:
+      usuario.nome,
+
+    usuarioDestinoId:
+      usuario.id,
+
+    usuarioDestinoNome:
+      usuario.nome
+  }
+)
 
   /* ENVIAR */
 
@@ -407,7 +532,7 @@ export default function Chat() {
                 (msg, index) => (
 
                   <MessageCard
-                    key={index}
+                    key={msg._id || index}
                     msg={msg}
                     usuarioAtual={
                       usuario.nome
@@ -459,7 +584,7 @@ export default function Chat() {
               .map((msg, index) => (
 
                 <MessageCard
-                  key={index}
+                  key={index || index}
                   msg={msg}
                   usuarioAtual={
                     usuario.nome

@@ -1,4 +1,7 @@
-import { useState } from 'react'
+import React, {
+  useState,
+  useEffect
+} from 'react'
 
 import {
   useNavigate,
@@ -9,24 +12,73 @@ import api from '../services/api'
 
 export default function Login() {
 
-  const navigate = useNavigate()
+  const navigate =
+    useNavigate()
 
-  const [email, setEmail] = useState('')
-  const [senha, setSenha] = useState('')
+  const [email, setEmail] =
+    useState('')
+
+  const [senha, setSenha] =
+    useState('')
+
+  const [mostrarSenha,
+    setMostrarSenha] =
+    useState(false)
+
+  const [loading,
+    setLoading] =
+    useState(false)
+
+  const [erro, setErro] =
+    useState('')
+
+  /* REDIRECIONA SE JÁ ESTIVER LOGADO */
+
+  useEffect(() => {
+
+    const token =
+      localStorage.getItem(
+        'token'
+      )
+
+    if (token) {
+
+      navigate('/chat')
+    }
+
+  }, [])
 
   async function fazerLogin(e) {
 
     e.preventDefault()
 
+    setErro('')
+
+    if (
+      !email.trim()
+      ||
+      !senha.trim()
+    ) {
+
+      setErro(
+        'Preencha todos os campos'
+      )
+
+      return
+    }
+
     try {
 
-      const response = await api.post(
-        '/auth/login',
-        {
-          email,
-          senha
-        }
-      )
+      setLoading(true)
+
+      const response =
+        await api.post(
+          '/auth/login',
+          {
+            email,
+            senha
+          }
+        )
 
       localStorage.setItem(
         'token',
@@ -35,12 +87,11 @@ export default function Login() {
 
       localStorage.setItem(
         'usuario',
+
         JSON.stringify(
           response.data.usuario
         )
       )
-
-      alert('Login realizado')
 
       navigate('/chat')
 
@@ -48,7 +99,13 @@ export default function Login() {
 
       console.log(error)
 
-      alert('Email ou senha inválidos')
+      setErro(
+        'Email ou senha inválidos'
+      )
+
+    } finally {
+
+      setLoading(false)
     }
   }
 
@@ -61,29 +118,99 @@ export default function Login() {
         onSubmit={fazerLogin}
       >
 
-        <h1>Login</h1>
+        <h1>
+
+          Chat Corporativo
+
+        </h1>
+
+        <p className="login-subtitle">
+
+          Entre na sua conta
+
+        </p>
+
+        {
+
+          erro && (
+
+            <div className="login-error">
+
+              {erro}
+
+            </div>
+          )
+        }
 
         <input
           type="email"
+
           placeholder="Digite seu email"
+
           value={email}
+
           onChange={(e) =>
-            setEmail(e.target.value)
+            setEmail(
+              e.target.value
+            )
           }
         />
 
-        <input
-          type="password"
-          placeholder="Digite sua senha"
-          value={senha}
-          onChange={(e) =>
-            setSenha(e.target.value)
+        <div className="password-area">
+
+          <input
+            type={
+              mostrarSenha
+                ? 'text'
+                : 'password'
+            }
+
+            placeholder="Digite sua senha"
+
+            value={senha}
+
+            onChange={(e) =>
+              setSenha(
+                e.target.value
+              )
+            }
+          />
+
+          <button
+            type="button"
+
+            className="show-password"
+
+            onClick={() =>
+              setMostrarSenha(
+                !mostrarSenha
+              )
+            }
+          >
+
+            {
+
+              mostrarSenha
+                ? 'Ocultar'
+                : 'Mostrar'
+            }
+
+          </button>
+
+        </div>
+
+        <button
+          type="submit"
+
+          disabled={loading}
+        >
+
+          {
+
+            loading
+              ? 'Entrando...'
+              : 'Entrar'
           }
-        />
-
-        <button type="submit">
-
-          Entrar
 
         </button>
 
@@ -92,6 +219,7 @@ export default function Login() {
             textAlign: 'center'
           }}
         >
+
           Não possui conta?&nbsp;
 
           <Link to="/register">

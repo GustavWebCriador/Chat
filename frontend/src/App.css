@@ -70,6 +70,33 @@ body {
   opacity: 0.9;
 }
 
+.login-error{
+  background:#ffebeb;
+  color:#d10000;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:15px;
+  font-size:14px;
+  text-align:center;
+}
+
+.password-area{
+  position:relative;
+  width:100%;
+}
+
+.show-password{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  background:none;
+  cursor:pointer;
+  font-size:13px;
+  color:#555;
+}
+
 /* CHAT */
 
 .chat-layout {

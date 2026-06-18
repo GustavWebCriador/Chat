@@ -1,3 +1,5 @@
+import React from 'react' 
+
 import {
   BrowserRouter,
   Routes,
@@ -10,13 +12,9 @@ import Register from '../pages/Register'
 import Chat from '../pages/Chat'
 
 function PrivateRoute({ children }) {
-
-  const token = localStorage.getItem(
-    'token'
-  )
+  const token = localStorage.getItem('token')
 
   if (!token) {
-
     return <Navigate to="/login" />
   }
 
@@ -24,43 +22,32 @@ function PrivateRoute({ children }) {
 }
 
 export default function AppRoutes() {
-
   return (
-
     <BrowserRouter>
-
       <Routes>
-
         <Route
           path="/login"
           element={<Login />}
         />
-
         <Route
           path="/register"
           element={<Register />}
         />
-
         <Route
           path="/chat"
           element={
             <PrivateRoute>
-
               <Chat />
-
             </PrivateRoute>
           }
         />
-
         <Route
           path="*"
           element={
             <Navigate to="/login" />
           }
         />
-
       </Routes>
-
     </BrowserRouter>
   )
 }

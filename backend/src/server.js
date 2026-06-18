@@ -1,5 +1,12 @@
 require('dotenv').config()
 
+const conectarMongo =
+  require('./database/mongo')
+conectarMongo()
+
+const Message =
+  require('./models/Message')
+
 const app = require('./app')
 
 const http = require('http')
@@ -87,7 +94,7 @@ io.on('connection', (socket) => {
 
   socket.on(
     'entrar_grupo',
-    (grupoId) => {
+    async (grupoId) => {
 
       socket.join(
         `grupo_${grupoId}`
@@ -96,17 +103,24 @@ io.on('connection', (socket) => {
       console.log(
         `Usuário entrou no grupo ${grupoId}`
       )
+
+      const historico =
+        await Message.find({
+          tipo: 'grupo',
+          grupoId
+        })
+          .sort({ createdAt: 1 })
+
+      socket.emit(
+        'historico_grupo',
+        historico
+      )
     }
   )
 
   socket.on(
     'mensagem_grupo',
-    (dados) => {
-
-      console.log(
-        'Mensagem grupo:',
-        dados
-      )
+    async (dados) => {
 
       const mensagemCompleta = {
 
@@ -121,8 +135,28 @@ io.on('connection', (socket) => {
 
         horario:
           new Date()
-            .toLocaleTimeString()
+            .toLocaleTimeString(
+              'pt-BR',
+              {
+                hour: '2-digit',
+                minute: '2-digit'
+              }
+            )
       }
+
+      await Message.create({
+
+        tipo: 'grupo',
+
+        grupoId:
+          dados.grupoId,
+
+        usuario:
+          dados.usuario,
+
+        mensagem:
+          dados.mensagem
+      })
 
       io.to(
         `grupo_${dados.grupoId}`
@@ -135,7 +169,7 @@ io.on('connection', (socket) => {
 
   socket.on(
     'mensagem_privada',
-    (dados) => {
+    async (dados) => {
 
       const mensagemCompleta = {
 
@@ -159,6 +193,26 @@ io.on('connection', (socket) => {
             .toLocaleTimeString()
       }
 
+      await Message.create({
+
+        tipo: 'privado',
+
+        usuario:
+          dados.usuario,
+
+        mensagem:
+          dados.mensagem,
+
+        destinatarioId:
+          dados.destinatarioId,
+
+        remetenteId:
+          socket.id,
+
+        remetenteNome:
+          socket.usuario
+      })
+
       io.to(
         dados.destinatarioId
       ).emit(
@@ -172,6 +226,47 @@ io.on('connection', (socket) => {
       )
     }
   )
+
+  socket.on(
+  'historico_privado',
+  async (dados) => {
+
+    const historico =
+      await Message.find({
+
+        tipo: 'privado',
+
+        $or: [
+
+          {
+            remetenteNome:
+              dados.usuarioAtual,
+
+            destinatarioId:
+              dados.usuarioDestinoId
+          },
+
+          {
+            remetenteNome:
+              dados.usuarioDestinoNome,
+
+            usuario:
+              dados.usuarioDestinoNome
+          }
+        ]
+      })
+
+      .sort({
+        createdAt: 1
+      })
+
+    socket.emit(
+      'historico_privado',
+      historico
+    )
+  }
+)
+
 
   socket.on(
     'disconnect',
